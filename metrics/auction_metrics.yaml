@@ -11,7 +11,7 @@ smallest_time_grain: "hour"
 measures:
   - display_name: Requests
     name: requests
-    expression: sum(bid_request_cnt) * 10000
+    expression: sum(bid_request_cnt) * 1000
     description: Total Requests
     format_preset: humanize
   - display_name: "Avg Bid Floor"
