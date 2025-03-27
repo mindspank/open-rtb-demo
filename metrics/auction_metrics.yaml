@@ -11,7 +11,7 @@ smallest_time_grain: "hour"
 measures:
   - display_name: Requests
     name: requests
-    expression: sum(bid_request_cnt) * 5000
+    expression: sum(bid_request_cnt) * 500000
     description: Total Requests
     format_preset: humanize
   - display_name: "Avg Bid Floor"
@@ -28,7 +28,7 @@ measures:
 
 dimensions:
   - name: app_site_name
-    display_name: App Site Name 23
+    display_name: App Site Name 23sd
     column: app_site_name
     description: ""
   - display_name: App Site Domain

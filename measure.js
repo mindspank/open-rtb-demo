@@ -49,20 +49,27 @@ async function watchLogsForReconcile(resourceName) {
 
 (async function main() {
     console.log("Starting log watcher...");
+    const totalStart = Date.now();
     const logWatcher = watchLogsForReconcile(RESOURCE_NAME);
 
-    console.log("Starting timer and running 'git push'...");
-    const startTime = Date.now();
-
+    console.log("Running 'git push'...");
+    const gitStart = Date.now();
     try {
         await runCommand("git push");
     } catch {
         process.exit(1);
     }
+    const gitEnd = Date.now();
+    const gitDuration = (gitEnd - gitStart) / 1000;
+
+    console.log(`git push completed in ${gitDuration.toFixed(2)} seconds`);
 
     await logWatcher;
 
-    const endTime = Date.now();
-    const duration = (endTime - startTime) / 1000;
-    console.log(`\n✅ Total deployment duration: ${duration.toFixed(2)} seconds`);
+    const totalEnd = Date.now();
+    const totalDuration = (totalEnd - totalStart) / 1000;
+
+    console.log(`\n✅ Total deployment duration: ${totalDuration.toFixed(2)} seconds`);
+    console.log(`📦 Git push duration: ${gitDuration.toFixed(2)} seconds`);
+    console.log(`⚙️  Post-push (reconciliation) duration: ${(totalDuration - gitDuration).toFixed(2)} seconds`);
 })();

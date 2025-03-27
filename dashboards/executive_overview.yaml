@@ -2,7 +2,7 @@
 # Reference documentation: https://docs.rilldata.com/reference/project-files/canvas-dashboards
 
 type: canvas
-display_name: Executive summary report 20444
+display_name: Executive summary report 2044rrrr4
 defaults:
   time_range: PT24H
   comparison_mode: time

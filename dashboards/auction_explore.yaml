@@ -16,8 +16,6 @@ time_zones:
   - Europe/London
   - Europe/Paris
 
-embeds:
-  hide_pivot: true
 defaults:
   measures:
     - requests
@@ -26,8 +24,6 @@ defaults:
   dimensions:
     - app_site_name
     - app_site_domain
-    - pub_name
-    - app_site_cat
     - ad_size
     - device_state
     - device_osv
