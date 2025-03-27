@@ -11,7 +11,10 @@ rows:
       - markdown:
           title: ""
           description: ""
-          content: "# Executive summary report"
+          content: "[Click me to get to detailed
+            view](https://ui.rilldata.com/alex-test/gittest/explore/auction_exp\
+            lore?view=pivot&rows=app_site_domain%2Capp_site_name&cols=avg_bid_f\
+            loor)"
           alignment:
             horizontal: left
             vertical: middle
