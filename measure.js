@@ -1,7 +1,7 @@
-const { exec } = require("child_process");
+const { spawn, exec } = require("child_process");
+const readline = require("readline");
 
 const RESOURCE_NAME = "auction_explore";
-const POLL_INTERVAL = 1000; // ms
 
 function runCommand(cmd) {
     return new Promise((resolve, reject) => {
@@ -15,48 +15,42 @@ function runCommand(cmd) {
     });
 }
 
-async function getResourceStatus() {
-    try {
-        const output = await runCommand("rill project status --format json");
+async function watchLogsForReconcile(resourceName) {
+    return new Promise((resolve, reject) => {
+        const logProcess = spawn("rill", ["project", "logs", "--follow", "--level=debug"]);
 
-        // Extract last JSON array from mixed output
-        const jsonStart = output.lastIndexOf("[");
-        const jsonString = output.slice(jsonStart);
-        const resources = JSON.parse(jsonString);
+        const rl = readline.createInterface({
+            input: logProcess.stdout,
+            crlfDelay: Infinity,
+        });
 
-        const target = resources.find(r => r.Name === RESOURCE_NAME);
-        return target ? target.Status : null;
-    } catch (err) {
-        console.error("Error parsing status JSON:", err.message);
-        return null;
-    }
-}
+        logProcess.stderr.on("data", data => {
+            console.error(`stderr: ${data}`);
+        });
 
-async function waitForStatusChangeFromIdle() {
-    console.log(`Waiting for '${RESOURCE_NAME}' to change from Idle...`);
-    while (true) {
-        const status = await getResourceStatus();
-        if (status && status !== "Idle") {
-            console.log(`Status changed to: ${status}`);
-            return;
-        }
-        await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
-    }
-}
+        logProcess.on("error", err => {
+            reject(new Error(`Failed to start log process: ${err.message}`));
+        });
 
-async function waitUntilBackToIdle() {
-    console.log("Waiting for status to return to Idle...");
-    while (true) {
-        const status = await getResourceStatus();
-        if (status === "Idle") {
-            console.log("Status is back to Idle.");
-            return;
-        }
-        await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
-    }
+        rl.on("line", line => {
+            if (
+                line.includes("INFO") &&
+                line.includes("Reconciled resource") &&
+                line.includes(`"name":"${resourceName}"`)
+            ) {
+                console.log(`✅ Found reconcile log for ${resourceName}`);
+                rl.close();
+                logProcess.kill();
+                resolve();
+            }
+        });
+    });
 }
 
 (async function main() {
+    console.log("Starting log watcher...");
+    const logWatcher = watchLogsForReconcile(RESOURCE_NAME);
+
     console.log("Starting timer and running 'git push'...");
     const startTime = Date.now();
 
@@ -66,8 +60,7 @@ async function waitUntilBackToIdle() {
         process.exit(1);
     }
 
-    await waitForStatusChangeFromIdle();
-    await waitUntilBackToIdle();
+    await logWatcher;
 
     const endTime = Date.now();
     const duration = (endTime - startTime) / 1000;
