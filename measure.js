@@ -17,20 +17,19 @@ function runCommand(cmd) {
 
 async function getResourceStatus() {
     try {
-        const output = await runCommand("rill project status");
-        const lines = output.split("\n");
-        for (const line of lines) {
-            if (line.includes(RESOURCE_NAME)) {
-                const match = line.trim().split(/\s+/); // split by whitespace
-                if (match.length >= 2) {
-                    return match[1]; // STATUS is second column
-                }
-            }
-        }
+        const output = await runCommand("rill project status --format json");
+
+        // Extract last JSON array from mixed output
+        const jsonStart = output.lastIndexOf("[");
+        const jsonString = output.slice(jsonStart);
+        const resources = JSON.parse(jsonString);
+
+        const target = resources.find(r => r.Name === RESOURCE_NAME);
+        return target ? target.Status : null;
     } catch (err) {
-        console.error("Error getting resource status:", err.message);
+        console.error("Error parsing status JSON:", err.message);
+        return null;
     }
-    return null;
 }
 
 async function waitForStatusChangeFromIdle() {
