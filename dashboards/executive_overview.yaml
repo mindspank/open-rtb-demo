@@ -21,6 +21,20 @@ rows:
         width: 12
     height: 80px
   - items:
+      - markdown:
+          title: ""
+          description: ""
+          content: "[![Alt
+            text](https://png.pngtree.com/png-clipart/20190410/ourmid/pngtree-r\
+            ed-glossy-button-png-image_908890.jpg)](https://ui.rilldata.com/ale\
+            x-test/gittest/explore/auction_explore?view=pivot&rows=app_site_dom\
+            ain%2Capp_site_name&cols=avg_bid_floor)"
+          alignment:
+            horizontal: left
+            vertical: middle
+        width: 12
+    height: 40px
+  - items:
       - kpi_grid:
           metrics_view: bids_metrics
           measures:
