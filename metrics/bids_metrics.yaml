@@ -11,7 +11,7 @@ smallest_time_grain: "hour"
 measures:
   - display_name: Advertising Spend Overall
     name: overall_spend
-    expression: sum(media_spend_usd)/1000
+    expression: sum(media_spend_usd)/10000
     description: Total Spend
     format_preset: currency_usd
   - display_name: "Bids"

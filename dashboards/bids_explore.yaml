@@ -19,11 +19,6 @@ time_zones:
   - Europe/London
   - Europe/Paris
   - Asia/Jerusalem
-  - Europe/Moscow
-  - Asia/Kolkata
-  - Asia/Shanghai
-  - Asia/Tokyo
-  - Australia/Sydney
 defaults:
   measures:
     - overall_spend
